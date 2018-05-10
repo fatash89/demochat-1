@@ -1,0 +1,73 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pd-backend
+  labels:
+    app: pd-backend
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pd-backend-container
+  template:
+    metadata:
+      labels:
+        app: pd-backend-container
+
+    spec:
+      imagePullSecrets:
+        - name: codefresh-generated-r.cfcr.io-cfcr-staging
+
+      containers:
+        - name: django
+          image: r.cfcr.io/zoetis/zoetis/petdialog-backend:develop
+          imagePullPolicy: Always
+          command: ["bash"]
+          args: ["-c", "uwsgi --ini /code/petdialog_web/uwsgi.ini"]
+          ports:
+            - containerPort: 8000
+          env:
+            - name: UWSGI_PORT
+              value: "8000"
+            - name: UWSGI_PROCESSES
+              value: "4"
+            - name: UWSGI_THREADS_USE
+              value: "true"
+            - name: UWSGI_THREADS
+              value: "2"
+            - name: UWSGI_THREADS_OFFLOAD
+              value: "2"
+            - name: UWSGI_HARAKIRI_COUNT
+              value: "60"
+
+            - name: DJANGO_ALLOWED_HOST
+              value: 'petdialog.cdi-stage.com'
+            - name: ENV
+              value: staging
+
+            - name: POSTGRES_USER
+              value: petdialog3_1
+            - name: POSTGRES_DB
+              value: petdialog
+            - name: POSTGRES_HOST
+              value: pd-stage-k8s-vpc.cdrzinh1897o.eu-west-1.rds.amazonaws.com
+
+            - name: REDIS_URL
+              value: pd-redis-service
+
+            - name: ELASTIC_APM_APP_NAME
+              value: petdialog-staging-k8s
+            - name: ELASTIC_APM_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-apm-secret-token
+                  key: password
+            - name: ELASTIC_APM_SERVER_URL
+              value: https://elk.cdi-stage.com:8200
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: postgres-credentials
+                    key: password
