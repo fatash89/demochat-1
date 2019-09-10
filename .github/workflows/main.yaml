@@ -1,0 +1,16 @@
+name: run codefresh pipeline
+on: push
+jobs:
+    build:
+        runs-on: ubuntu-18.04
+        steps:
+        - name: Checkout
+          uses: actions/checkout@master
+
+        - name: 'run pipeline'
+          uses: codefresh-io/codefresh-pipeline-runner@v5
+          env:
+              PIPELINE_NAME: 'github_action/github_action'
+              TRIGGER_NAME: 'denys-codefresh/demochat'
+              CF_API_KEY: ${{ secrets.CF_API_TOKEN }}
+          id: run-pipeline
