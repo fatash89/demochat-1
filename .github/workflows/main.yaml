@@ -11,7 +11,7 @@ jobs:
         - name: 'run pipeline'
           uses: codefresh-io/codefresh-pipeline-runner@v5
           env:
-              PIPELINE_NAME: 'github_action/github_action'
-              TRIGGER_NAME: 'denys-codefresh/demochat'
+              PIPELINE_NAME: 'github-action/github-action'
+              TRIGGER_NAME: 'denys-codefresh/demochat-1'
               CF_API_KEY: ${{ secrets.CF_API_TOKEN }}
           id: run-pipeline
