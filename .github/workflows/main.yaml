@@ -7,7 +7,6 @@ jobs:
         - name: Checkout
           uses: actions/checkout@master
 
-
         - name: 'run pipeline'
           uses: codefresh-io/codefresh-pipeline-runner@v5
           env:
